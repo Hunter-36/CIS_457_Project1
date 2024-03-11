@@ -54,4 +54,6 @@ Run the client: ./ftp_client
 Contributors:
 
 Hunter Sutton
-
+Jack Wolak
+Andrew Slayton
+Matteo Ciavaglia.
