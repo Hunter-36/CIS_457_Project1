@@ -76,15 +76,15 @@ class FTPClient {
 					if (response.startsWith("200")) {
         			// File found, receive and save the file
 						System.out.println("Downloading file...");
-        			FileOutputStream fileOut = new FileOutputStream(fileName);
-        			byte[] buffer = new byte[1024];
-        			int bytesRead;
-        			while ((bytesRead = inData.read(buffer)) != -1) {
-        		    	fileOut.write(buffer, 0, bytesRead);
-        			}
-        			fileOut.close();
+        				FileOutputStream fileOut = new FileOutputStream(fileName);
+        				byte[] buffer = new byte[1024];
+        				int bytesRead;
+        				while ((bytesRead = inData.read(buffer)) != -1) {
+        		    		fileOut.write(buffer, 0, bytesRead);
+        				}
+        				fileOut.close();
 
-        			System.out.println("File '" + fileName + "' downloaded successfully.");
+        				System.out.println("File '" + fileName + "' downloaded successfully.");
     				} 
 					else if (response.startsWith("550")) {
         			// File not found
@@ -96,8 +96,46 @@ class FTPClient {
 
     				System.out.println("\nWhat would you like to do next: \nlist: || get: file.txt || stor: file.txt || close");
 				}
+				
+				// stor command
+				else if (sentence.startsWith("stor: ")) {
+					String fileName = sentence.substring(6).trim(); // Extract the file name from the command
 
-				// else if (response.startsWith("stor")) {
+					File fileToSend = new File(fileName);
+					boolean fileExists = fileToSend.exists();
+				
+					if (!fileExists) {
+						System.out.println("Error: File '" + fileName + "' does not exist.");
+					} else {
+    					// Send command to server
+    					outToServer.writeBytes(port + " " + sentence + " " + '\n');
+
+    					// Setup data connection for sending file
+    					port = port + 2;
+    					ServerSocket welcomeData = new ServerSocket(port);
+    					outToServer.writeBytes(port + " " + '\n'); // Inform server of data port
+
+    					Socket dataSocket = welcomeData.accept();
+    					DataOutputStream outData = new DataOutputStream(new BufferedOutputStream(dataSocket.getOutputStream()));
+
+    					// Send the file
+    					FileInputStream fileInputStream = new FileInputStream(fileToSend);
+    					byte[] buffer = new byte[1024];
+    					int bytesRead;
+    					while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+        					outData.write(buffer, 0, bytesRead);
+    					}
+    					fileInputStream.close();
+
+    					// Close data connection
+    					outData.close();
+    					dataSocket.close();
+    					welcomeData.close();
+
+    					System.out.println("File '" + fileName + "' sent successfully.");
+					}
+					System.out.println("\nWhat would you like to do next: \nlist: || get: file.txt || stor: file.txt || close");
+				}
 
 				else{
 	     			if(sentence.equals("close")) {
