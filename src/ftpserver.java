@@ -56,12 +56,11 @@ import javax.swing.*;
 
                 if (clientCommand.equals("list:")) {
                     String curDir = System.getProperty("user.dir");
-
+                    
                     Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
                     DataOutputStream dataOutToClient =
                             new DataOutputStream(dataSocket.getOutputStream());
                     File dir = new File(curDir);
-
                     String[] children = dir.list();
                     if (children == null) {
                         // Either dir does not exist or is not a directory
@@ -76,13 +75,12 @@ import javax.swing.*;
                             if (i - 1 == children.length - 2) {
                                 dataOutToClient.writeUTF("eof");
                                 // System.out.println("eof");
-                            }//if(i-1)
-
-
-                        }//for
-
+                            }if (i == 0) {
+                                dataOutToClient.writeUTF("eof");
+                                // System.out.println("eof");
+                            }
+                        }
                         dataSocket.close();
-                        //System.out.println("Data Socket closed");
                     }//else
 
 
@@ -108,40 +106,38 @@ import javax.swing.*;
 
                //get function (RETR Command)
                 if (clientCommand.equals("get:")) {
-                    String fileName = tokens.nextToken();
-
-                    File fileToSend = new File(fileName);
-                    boolean fileExists = fileToSend.exists();
-
-                    if (fileExists) {
-                        Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
-                        DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
-
-                        FileInputStream fileInputStream = new FileInputStream(fileToSend);
-                        byte[] buffer = new byte[1024];
-                        int bytesRead;
-
-                        //Response code 200 for file found
-                        outToClient.writeBytes("200 File found\n");
-
-                        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                            dataOutToClient.write(buffer, 0, bytesRead);
-                        }
-
-                        fileInputStream.close();
-                        dataOutToClient.close();
-                        dataSocket.close();
-                    } else {
-                        //Response code 550 for file not found
-                        outToClient.writeBytes("550 File not found\n");
+                    String filesend = tokens.nextToken();
+                    Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+                    DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+                    FileInputStream fileSent = new FileInputStream(filesend);
+                    int content = 0;
+                    data = new byte[1024];
+                    while ((content = fileSent.read(data)) != -1) {
+                        dataOutToClient.write(data, 0, content);
                     }
+                    System.out.println("sent to client: " + filesend);
+                    fileSent.close();
+                    dataSocket.close();
+                } 
+            }
+
+                       
+               
+            
+            }
+            public static void main(String[] args) {
+                try {
+                    ServerSocket welcomeSocket = new ServerSocket(12000); 
+
+                    while (true) {
+                        Socket connectionSocket = welcomeSocket.accept();
+                        ftpserver server = new ftpserver(connectionSocket);
+                        server.start();
+                    }
+                } catch (IOException e) {
+                    System.out.println("server error");
                 }
-
-
-            }//main
-
             }
         }
-
 
 
