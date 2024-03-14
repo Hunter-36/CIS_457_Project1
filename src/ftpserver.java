@@ -66,25 +66,17 @@ import javax.swing.*;
                         // Either dir does not exist or is not a directory
                     } else {
                         for (int i = 0; i < children.length; i++) {
-                            // Get filename of file or directory
                             String filename = children[i];
-
-                            if (filename.endsWith(".txt"))
-                                dataOutToClient.writeUTF(children[i]);
-                            //System.out.println(filename);
-                            if (i - 1 == children.length - 2) {
-                                dataOutToClient.writeUTF("eof");
-                                // System.out.println("eof");
-                            }if (i == 0) {
-                                dataOutToClient.writeUTF("eof");
-                                // System.out.println("eof");
+                            if (filename.endsWith(".txt")) {
+                                dataOutToClient.writeUTF(filename);
                             }
                         }
-                        dataSocket.close();
-                    }//else
-
-
-                }if(clientCommand.equals("stor:")) {
+                        // Send "eof" after sending all files
+                        dataOutToClient.writeUTF("eof");
+                    }
+                    dataSocket.close();
+                }//else
+                if(clientCommand.equals("stor:")) {
                     String filename = tokens.nextToken();
                     Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
                     DataInputStream dataInFromClient = new DataInputStream(dataSocket.getInputStream());
@@ -115,12 +107,9 @@ import javax.swing.*;
                     fileSent.close();
                     dataSocket.close();
                 } 
-            }
-
-                       
-               
+            }   
             
-            }
+        }
             public static void main(String[] args) {
                 try {
                     ServerSocket welcomeSocket = new ServerSocket(12000); 

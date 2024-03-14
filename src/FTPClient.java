@@ -85,6 +85,7 @@ class FTPClient {
 					else if (response.startsWith("550")) {
         				System.out.println("Error: File '" + fileName + "' not found on the server.");
     				}
+					
     				welcomeData.close();
     				dataSocket.close();
 
