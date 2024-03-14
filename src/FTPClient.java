@@ -59,7 +59,7 @@ class FTPClient {
 	 				System.out.println("\nWhat would you like to do next: \nget: file.txt ||  stor: file.txt  || close");
         		}	
 
-    			else if (sentence.startsWith("get: ")) {
+				else if (sentence.startsWith("get: ")) {
     				String fileName = sentence.substring(5).trim(); // Extract the file name from the command
     				outToServer.writeBytes(port + " " + sentence + " " + '\n'); // Send the command to the server
 
@@ -85,8 +85,8 @@ class FTPClient {
         				fileOut.close();
 
         				System.out.println("File '" + fileName + "' downloaded successfully.");
-    				} 
-					else if (response.startsWith("550")) {
+    				}
+					 else if (response.startsWith("550")) {
         			// File not found
         				System.out.println("Error: File '" + fileName + "' not found on the server.");
     				}
@@ -96,7 +96,7 @@ class FTPClient {
 
     				System.out.println("\nWhat would you like to do next: \nlist: || get: file.txt || stor: file.txt || close");
 				}
-				
+
 				// stor command
 				else if (sentence.startsWith("stor: ")) {
 					String fileName = sentence.substring(6).trim(); // Extract the file name from the command

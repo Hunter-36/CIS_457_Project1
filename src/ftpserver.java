@@ -1,11 +1,9 @@
-import java.io.*; 
+import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.text.*;
 import java.lang.*;
-import javax.swing.*;
 
-    public class ftpserver extends Thread {
+public class ftpserver extends Thread {
         private Socket connectionSocket;
         int port;
         int count = 1;
@@ -155,6 +153,8 @@ import javax.swing.*;
                         outToClient.writeBytes("550 File not found\n");
                     }
                 }
+
+
 
 
             }//main
