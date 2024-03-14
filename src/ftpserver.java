@@ -11,7 +11,26 @@ import javax.swing.*;
         int count = 1;
 
         public ftpserver(Socket connectionSocket) {
+
             this.connectionSocket = connectionSocket;
+        }
+
+        public static void main(String[] args) {
+
+            try {
+                int portNum = 1200;
+                ServerSocket welcomeSocket = new ServerSocket(portNum);
+                System.out.println("FTP Server started on port " + portNum);
+
+                while (true) {
+                    Socket connectionSocket = welcomeSocket.accept();
+                    System.out.println("User connected: " + connectionSocket.getInetAddress());
+                    Thread ftpThread = new ftpserver(connectionSocket);
+                    ftpThread.start();
+                }
+            } catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
         }
 
 
@@ -141,6 +160,8 @@ import javax.swing.*;
             }//main
 
             }
+
+
         }
 
 
