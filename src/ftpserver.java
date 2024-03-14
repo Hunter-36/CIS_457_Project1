@@ -85,22 +85,18 @@ import javax.swing.*;
 
 
                 }if(clientCommand.equals("stor:")) {
-                    String file = tokens.nextToken();
+                    String filename = tokens.nextToken();
                     Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
-                    DataInputStream dataIntake = new DataInputStream(dataSocket.getInputStream());
-                    FileOutputStream fileSent = new FileOutputStream(file);
-                    int content = 0;
+                    DataInputStream dataInFromClient = new DataInputStream(dataSocket.getInputStream());
+                    FileOutputStream fileOut = new FileOutputStream(filename);
+                    int content;
                     data = new byte[1024];
-                    System.out.println("debugging 1 file sent: " + file);
-                    while ((content = dataIntake.read(data)) != -1) {
-                        fileSent.write(data, 0, content);
+                    while ((content = dataInFromClient.read(data)) != -1) {
+                        fileOut.write(data, 0, content);
                     }
-                    System.out.println("debugging 2 file sent: " + file);
-                    fileSent.close();
+                    System.out.println("received from client: " + filename);
+                    fileOut.close();
                     dataSocket.close();
-                }
-                if (clientCommand.equals("close: ")) {
-                    connectionSocket.close();
                 }
 
 
