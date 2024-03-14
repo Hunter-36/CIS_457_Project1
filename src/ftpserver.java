@@ -93,20 +93,36 @@ import javax.swing.*;
 
 
                //get function (RETR Command)
-                if (clientCommand.equals("get:")) {
-                    String filesend = tokens.nextToken();
-                    Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
-                    DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
-                    FileInputStream fileSent = new FileInputStream(filesend);
-                    int content = 0;
-                    data = new byte[1024];
-                    while ((content = fileSent.read(data)) != -1) {
-                        dataOutToClient.write(data, 0, content);
+               if (clientCommand.startsWith("get: ")) {
+                String fileName = clientCommand.substring(5).trim();
+                Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+                DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+            
+                try {
+                    FileInputStream fileSent = new FileInputStream(fileName);
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+            
+                    // Send success response to client
+                    dataOutToClient.writeBytes("200 File OK\n");
+            
+                    // Send file contents to client
+                    while ((bytesRead = fileSent.read(buffer)) != -1) {
+                        dataOutToClient.write(buffer, 0, bytesRead);
                     }
-                    System.out.println("sent to client: " + filesend);
+            
+                    System.out.println("Sent to client: " + fileName);
                     fileSent.close();
-                    dataSocket.close();
-                } 
+                } catch (FileNotFoundException e) {
+                    // Send error response to client if file not found
+                    dataOutToClient.writeBytes("550 File not found\n");
+                    System.out.println("File not found: " + fileName);
+                }
+            
+                // Close connections
+                dataOutToClient.close();
+                dataSocket.close();
+            }
             }   
             
         }
