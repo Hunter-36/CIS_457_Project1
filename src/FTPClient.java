@@ -137,13 +137,13 @@ class FTPClient {
 					System.out.println("\nWhat would you like to do next: \nlist: || get: file.txt || stor: file.txt || close");
 				}
 
-				else{
-	     			if(sentence.equals("close")) {
+				else if(sentence.equals("close")) {
 						clientgo = false;
 	     			}
-	     			System.out.print("No server exists with that name or server not listening on that port try agian");         
     			}
-			}
+			}else {
+			System.out.print("No server exists with that name or server not listening on that port try agian");
+		}
 		}
 	}
-}
+
