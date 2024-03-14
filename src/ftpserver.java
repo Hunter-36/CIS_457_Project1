@@ -86,9 +86,29 @@ import javax.swing.*;
                     }//else
 
 
-                }//if list:
+                }if(clientCommand.equals("stor:")) {
+                    String file = tokens.nextToken();
+                    Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+                    DataInputStream dataIntake = new DataInputStream(dataSocket.getInputStream());
+                    FileOutputStream fileSent = new FileOutputStream(file);
+                    int content = 0;
+                    data = new byte[1024];
+                    System.out.println("debugging 1 file sent: " + file);
+                    while ((content = dataIntake.read(data)) != -1) {
+                        fileSent.write(data, 0, content);
+                    }
+                    System.out.println("debugging 2 file sent: " + file);
+                    fileSent.close();
+                    dataSocket.close();
+                }
+                if (clientCommand.equals("close: ")) {
+                    connectionSocket.close();
+                }
 
 
+
+
+                    /*            ....................................
                 if (clientCommand.equals("get:")) {
             /*            ....................................
 			....................................
