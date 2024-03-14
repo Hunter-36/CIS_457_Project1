@@ -106,20 +106,42 @@ import javax.swing.*;
                 }
 
 
-
-
-                    /*            ....................................
+               //get function (RETR Command)
                 if (clientCommand.equals("get:")) {
-            /*            ....................................
-			....................................
-			....................................
+                    String fileName = tokens.nextToken();
 
-*/
+                    File fileToSend = new File(fileName);
+                    boolean fileExists = fileToSend.exists();
 
-                }//main
+                    if (fileExists) {
+                        Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+                        DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+
+                        FileInputStream fileInputStream = new FileInputStream(fileToSend);
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+
+                        //Response code 200 for file found
+                        outToClient.writeBytes("200 File found\n");
+
+                        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                            dataOutToClient.write(buffer, 0, bytesRead);
+                        }
+
+                        fileInputStream.close();
+                        dataOutToClient.close();
+                        dataSocket.close();
+                    } else {
+                        //Response code 550 for file not found
+                        outToClient.writeBytes("550 File not found\n");
+                    }
+                }
+
+
+            }//main
 
             }
         }
-    }
-	
+
+
 
