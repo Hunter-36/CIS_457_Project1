@@ -13,8 +13,8 @@ class FTPClient {
         boolean isOpen = true;
         int number=1;
         boolean notEnd = true;
-		int port1=1221;
-		int port = 1200;
+		int port1=2861;
+		int port = 2840;
 		String statusCode;
 		boolean clientgo = true;
 	    
