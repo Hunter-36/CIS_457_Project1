@@ -71,24 +71,32 @@ class FTPClient {
 					String response = new BufferedReader(new InputStreamReader(inFromServer)).readLine(); // Response from server: 200 or 550
 					System.out.println("Response: " + response);
 					if (response.startsWith("200")) {
-						System.out.println("Downloading file...");
-        				FileOutputStream fileOut = new FileOutputStream(fileName);
-        				byte[] buffer = new byte[1024];
-        				int bytesRead;
-        				while ((bytesRead = inData.read(buffer)) != -1) {
-        		    		fileOut.write(buffer, 0, bytesRead);
-        				}
-        				fileOut.close();
-
-        				System.out.println("File '" + fileName + "' downloaded successfully.");
-    				} 
+						fileName = "downloadedClient_" + fileName;
+						File file = new File(fileName);
+						FileWriter fileWriter = new FileWriter(file);
+						BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+						BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inData));
+						String line;
+						try {
+							while ((line = bufferedReader.readLine()) != null) {
+								if (line.equals("eof")) {
+									break;
+								}
+								bufferedWriter.write(line);
+								bufferedWriter.newLine();
+							}
+						} catch (EOFException e) {
+							System.out.println("EOFException: " + e.getMessage());
+						}
+						bufferedWriter.close();
+						System.out.println("File '" + fileName + "' sent to the client successfully.");
+					}
 					else if (response.startsWith("550")) {
         				System.out.println("Error: File '" + fileName + "' not found on the server.");
     				}
 					
     				welcomeData.close();
     				dataSocket.close();
-
     				System.out.println("\nWhat would you like to do next: \nlist: || get: file.txt || stor: file.txt || close");
 				}
 
